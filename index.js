@@ -1,58 +1,26 @@
 require('dotenv').config()
 require("datejs")
+const express = require('express')
+const bodyParser = require("body-parser");
 
-const EWS = require('node-ews');
+let app = express();
 
-const ewsConfig = {
-  host: process.env.EWS_HOST,
-  username: process.env.EWS_USER,
-  password: process.env.EWS_PASS
-};
+let apiRoutes = require("./api-routes");
+app.use(bodyParser.urlencoded({ 
+    extended: true 
+}));
+app.use(bodyParser.json());
 
-const ews = new EWS(ewsConfig);
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, contentType,Content-Type, Accept, Authorization");
+  next();
+});
 
-const ewsFunction = 'FindItem';
+app.use(process.env.APIROOT, apiRoutes);
 
-let StartDate = new Date('2020-01-01 00:00');
-let EndDate = new Date('2020-12-31 23:59');
-StartDate = StartDate.toISOString();
-EndDate = EndDate.toISOString();
-
-const EmailAddress = 'ece-biblioteket@ug.kth.se';
-
-const ewsArgs = {
-    'attributes': {
-      'Traversal': 'Shallow'
-    },
-    'ItemShape': {
-      'BaseShape': 'AllProperties'
-    },
-    'CalendarView ': {
-      'attributes': {
-        'StartDate': StartDate,
-        'EndDate': EndDate
-      }
-    },
-    'ParentFolderIds' : {
-      'DistinguishedFolderId': {
-        'attributes': {
-          'Id': 'calendar'
-        },
-        'Mailbox': {
-          'EmailAddress': EmailAddress
-        }
-      }
-    }
-};
-
-function getcalendarevents(ewsFunction, ewsArgs) {
-  ews.run(ewsFunction, ewsArgs)
-    .then(result => {
-      console.log(JSON.stringify(result));
-    })
-    .catch(err => {
-      console.log(err.stack);
-    });
-}
-
-getcalendarevents(ewsFunction, ewsArgs);
+var port = process.env.APIPORT
+var server = app.listen(port, function () {
+    console.log("App now running on port", port);
+});
