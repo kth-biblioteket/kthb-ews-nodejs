@@ -1,0 +1,16 @@
+{
+  "name": "kthb-ews-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "datejs": "^1.0.0-rc3",
+    "dotenv": "^8.1.0",
+    "node-ews": "^3.2.4"
+  }
+}
