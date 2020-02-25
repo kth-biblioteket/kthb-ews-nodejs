@@ -5,10 +5,10 @@ const ewsConfig = {
     password: process.env.EWS_PASS
 };
 
+let ews = new EWS(ewsConfig);
+
 exports.getCalendarEvents = async function (req, res) {
     
-  let ews = new EWS(ewsConfig);
-
   const ewsFunction = 'FindItem';
   
   const EmailAddress = req.params.emailaddress;
