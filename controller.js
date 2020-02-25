@@ -7,7 +7,7 @@ const ewsConfig = {
 
 exports.getCalendarEvents = async function (req, res) {
     
-  const ews = new EWS(ewsConfig);
+  let ews = new EWS(ewsConfig);
 
   const ewsFunction = 'FindItem';
   
