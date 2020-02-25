@@ -7,51 +7,56 @@ const ewsConfig = {
 
 exports.getCalendarEvents = async function (req, res) {
     
-    const ews = new EWS(ewsConfig);
+  const ews = new EWS(ewsConfig);
 
-    const ewsFunction = 'FindItem';
-    
-    const EmailAddress = req.params.emailaddress;
-    
-    let StartDate = new Date(req.query.startdate);
-    let EndDate = new Date(req.query.enddate);
+  const ewsFunction = 'FindItem';
+  
+  const EmailAddress = req.params.emailaddress;
+
+  let StartDate
+  let EndDate
+  try {
+    StartDate = new Date(req.query.startdate);
+    EndDate = new Date(req.query.enddate);
     
     StartDate = StartDate.toISOString();
     EndDate = EndDate.toISOString();
-
+  }
+  catch(err) {
+    return res.status(500).json({'error: ' : err.toString()});
+  }
     const ewsArgs = {
+      'attributes': {
+        'Traversal': 'Shallow'
+      },
+      'ItemShape': {
+        'BaseShape': 'AllProperties'
+      },
+      'CalendarView ': {
         'attributes': {
-          'Traversal': 'Shallow'
-        },
-        'ItemShape': {
-          'BaseShape': 'AllProperties'
-        },
-        'CalendarView ': {
+          'StartDate': StartDate,
+          'EndDate': EndDate
+        }
+      },
+      'ParentFolderIds' : {
+        'DistinguishedFolderId': {
           'attributes': {
-            'StartDate': StartDate,
-            'EndDate': EndDate
-          }
-        },
-        'ParentFolderIds' : {
-          'DistinguishedFolderId': {
-            'attributes': {
-              'Id': 'calendar'
-            },
-            'Mailbox': {
-              'EmailAddress': EmailAddress
-            }
+            'Id': 'calendar'
+          },
+          'Mailbox': {
+            'EmailAddress': EmailAddress
           }
         }
+      }
     };
+  
 
     ews.run(ewsFunction, ewsArgs)
     .then(result => {
-        //res.json(result);
-        JSON.stringify(result)
+        res.json(result);
     })
     .catch(err => {
       console.log(err.stack);
     });
-
-    
+  
 };
