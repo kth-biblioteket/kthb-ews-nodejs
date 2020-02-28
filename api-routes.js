@@ -7,6 +7,14 @@ router.get('/', function(req, res) {
 
 var controller = require('./controller');
 
-router.get('/calendarevents/:emailaddress', VerifyToken, controller.getCalendarEvents)
+router.get('/calendaritems/emailaddress/:emailaddress', VerifyToken, controller.getCalendarItems)
+
+router.get('/calendaritems/:itemid', VerifyToken, controller.getItems)
+
+router.get('/calendaravailability/:emailaddress', VerifyToken, controller.getCalendarAvailability)
+
+router.post('/calendaritems', VerifyToken, controller.createCalendarItems)
+
+router.delete('/calendaritems', VerifyToken, controller.cancelCalendarItems)
     
 module.exports = router;
